@@ -50,6 +50,9 @@ Run the executable via Command Prompt or PowerShell:
 3. Release to start the capture session.
 4. Press **ESC** during selection to default to Full Screen.
 
+### Documentation:
+The documentation provided is there for your AI tool to read and understand the structure.
+
 ## 📂 Output Structure
 
 ```text
