@@ -71,3 +71,32 @@ Target_Directory/
 
 ## ⚖️ License
 This project is provided "as-is" for developer and AI research purposes.
+
+## 🔧 Troubleshooting
+
+### 🛑 Incorrect Colors (Red/Blue Swap)
+Windows natively captures frames in **BGRA** (Blue-Green-Red-Alpha) order. While this tool includes an internal swapper to output standard **RGB**, some specific "Studio" environments or GPU drivers may provide a different raw buffer.
+
+**If your blues appear orange or vice-versa:**
+1. Locate the `ProcessingWorker` function in the source code.
+2. Find the nested `for` loops where pixels are copied.
+3. Toggle the indices `0` and `2` in the mapping block:
+
+```cpp
+// Current (RGB)
+dRow[x * 3 + 0] = sR[x * 4 + 0]; // R
+dRow[x * 3 + 2] = sR[x * 4 + 2]; // B
+
+// Change to this if colors are swapped:
+dRow[x * 3 + 0] = sR[x * 4 + 2]; 
+dRow[x * 3 + 2] = sR[x * 4 + 0];
+```
+
+### 🛑 Error: "Could not duplicate output"
+This usually occurs for one of two reasons:
+1. **Conflicting Software**: Only one application can use the Desktop Duplication API at a time per monitor. Close other screen recorders or overlays (like OBS or Discord Stream).
+2. **Hybrid Graphics**: On laptops, ensure the tool is forced to run on the **High-Performance GPU** (NVIDIA/AMD) via *Windows Settings > Graphics Settings*, matching the GPU that powers your display.
+
+### 🛑 Missing DLLs
+Ensure you have the **Windows 10/11 SDK** installed via the Visual Studio Installer. The tool relies on `D3D11.dll`, `DXGI.dll`, and `Windowscodecs.dll`, which are standard system files.
+
