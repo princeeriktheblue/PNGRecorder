@@ -35,7 +35,7 @@ The project automatically links required libraries via pragmas:
 Run the executable via Command Prompt or PowerShell:
 
 ```bash
-.\Capture.exe [Base_Path] [Duration_Sec] [Interval_Sec] [Monitor_Index]
+.\PNGRecorder.exe [Base_Path] [Duration_Sec] [Interval_Sec] [Monitor_Index]
 ```
 
 ### Examples:
