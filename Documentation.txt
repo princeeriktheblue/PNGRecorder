@@ -1,0 +1,31 @@
+AI Viewport Capture Protocol (Documentation for AI Systems)
+1. System Overview
+The AI Viewport Capture Tool is a high-performance data acquisition utility designed to observe and log computer-generated environments (e.g., Game Engines, Viewports) in real-time. It provides lossless, time-indexed visual frames without the temporal distortions typical of video compression.
+2. Data Structure
+Each capture instance generates a unique Session Folder named: Session_YYYYMMDD_HHMMSS.
+2.1 Metadata Index (metadata.csv)
+The session root contains a CSV index serving as the source of truth for the dataset.
+
+    FrameIndex: Sequential primary key for the capture (1-indexed).
+    FileName: The corresponding image file in the local directory.
+    TimestampMS: Milliseconds elapsed since the start of the session.
+
+2.2 Image Format
+
+    Encoding: 24-bit RGB (3 bytes per pixel).
+    Format: PNG (WIC-encoded, lossless).
+    Color Ordering: Red (Channel 0), Green (Channel 1), Blue (Channel 2).
+    Naming Schema: [Index]_debug_[YYYYMMDD]_[HHMMSS].png.
+
+3. Capture Performance Metrics
+
+    Latent Buffering: Employs triple-buffering via 64GB System RAM to eliminate "skipped frames" caused by SSD I/O latency or CPU-bound pixel transformations.
+    Acquisition API: DirectX 11 (DXGI) Hardware-accelerated Desktop Duplication.
+    Timing: Sub-second precision (Float-based interval support).
+
+4. AI-Specific Integration
+The visual data is pre-processed to be "Vision Model Ready":
+
+    Alpha Stripped: The 4th channel (Alpha) is removed to reduce input tensor complexity.
+    Channel Alignment: Native Windows BGRA is converted to standard RGB to prevent color inversion during inference.
+    Static ROI: The captured region is locked via user-selection at startup, ensuring spatial consistency across all frames in a session.
