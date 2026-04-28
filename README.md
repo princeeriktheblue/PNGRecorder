@@ -1,0 +1,65 @@
+AI Viewport Capture Tool (v3.4)
+A high-performance C++ utility designed for capturing lossless, time-indexed visual data from Windows viewports. Optimized for feeding visual data to AI models, debugging game states, or creating high-fidelity datasets.
+🚀 Key Features
+
+    Triple-Buffered Architecture: Decouples GPU acquisition, pixel processing, and I/O. Uses system RAM as a shock absorber to ensure zero frame-skipping on high-speed NVMe drives.
+    Interactive ROI Selector: A Dim-and-Drag UI at startup allows you to visually define a static Region of Interest (ROI) (e.g., a game viewport or a specific HUD element).
+    AI-Native Output:
+        Converts Windows native BGRA to standard 24-bit RGB on the fly.
+        Strips Alpha channels to reduce input tensor complexity.
+    Session-Based Organization: Automatically generates unique, timestamped folders for every burst.
+    Metadata Logging: Outputs a metadata.csv for every session, mapping frame indices to filenames and exact millisecond timestamps.
+    Sub-Second Precision: Supports float-based intervals (e.g., 0.1 for 10 FPS capture).
+
+🛠 Prerequisites
+
+    OS: Windows 10 or 11.
+    Hardware: DirectX 11 compatible GPU and a fast SSD (NVMe recommended).
+    Development: Visual Studio 2019/2022 with the "Desktop development with C++" workload.
+
+📦 Setup & Compilation
+
+    Create a new C++ Console App in Visual Studio.
+    Replace the contents of main.cpp with the provided source code.
+    Set the Solution Platform to x64.
+    Build in Release mode for maximum performance.
+
+The project automatically links required libraries (d3d11.lib, dxgi.lib, windowscodecs.lib, shlwapi.lib, shell32.lib) via pragmas.
+📖 Usage
+Run the executable via Command Prompt or PowerShell:
+bash
+
+.\Capture.exe [Base_Path] [Duration_Sec] [Interval_Sec] [Monitor_Index]
+
+Use code with caution.
+Examples:
+
+    Standard Debug: .\Capture.exe C:\DebugData 30 1.0 0
+    (30 seconds, 1 frame/sec, Primary Monitor)
+    High-Speed Burst: .\Capture.exe D:\AI_Training 10 0.1 0
+    (10 seconds, 10 frames/sec, Primary Monitor)
+
+Operation:
+
+    Launch the tool. The screen will dim.
+    Click and drag to draw a red box around your target viewport.
+    Release to start the capture session.
+    Press ESC during selection to default to Full Screen.
+
+📂 Output Structure
+text
+
+Target_Directory/
+└── Session_20240325_143005/
+    ├── metadata.csv
+    ├── 0001_debug_20240325_143006.png
+    ├── 0002_debug_20240325_143007.png
+    └── ...
+
+Use code with caution.
+Metadata Format:
+FrameIndex	FileName	TimestampMS
+1	0001_debug_...png	102
+2	0002_debug_...png	1105
+⚖️ License
+This project is provided "as-is" for developer and AI research purposes.
