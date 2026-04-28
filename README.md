@@ -1,65 +1,73 @@
-AI Viewport Capture Tool (v3.4)
+# AI Viewport Capture Tool (v3.4)
+
 A high-performance C++ utility designed for capturing lossless, time-indexed visual data from Windows viewports. Optimized for feeding visual data to AI models, debugging game states, or creating high-fidelity datasets.
-🚀 Key Features
 
-    Triple-Buffered Architecture: Decouples GPU acquisition, pixel processing, and I/O. Uses system RAM as a shock absorber to ensure zero frame-skipping on high-speed NVMe drives.
-    Interactive ROI Selector: A Dim-and-Drag UI at startup allows you to visually define a static Region of Interest (ROI) (e.g., a game viewport or a specific HUD element).
-    AI-Native Output:
-        Converts Windows native BGRA to standard 24-bit RGB on the fly.
-        Strips Alpha channels to reduce input tensor complexity.
-    Session-Based Organization: Automatically generates unique, timestamped folders for every burst.
-    Metadata Logging: Outputs a metadata.csv for every session, mapping frame indices to filenames and exact millisecond timestamps.
-    Sub-Second Precision: Supports float-based intervals (e.g., 0.1 for 10 FPS capture).
+## 🚀 Key Features
 
-🛠 Prerequisites
+- **Triple-Buffered Architecture**: Decouples GPU acquisition, pixel processing, and I/O. Uses system RAM as a shock absorber to ensure zero frame-skipping on high-speed NVMe drives.
+- **Interactive ROI Selector**: A Dim-and-Drag UI at startup allows you to visually define a static Region of Interest (ROI) (e.g., a game viewport or a specific HUD element).
+- **AI-Native Output**: 
+    - Converts Windows native **BGRA** to standard **24-bit RGB** on the fly.
+    - Strips Alpha channels to reduce input tensor complexity.
+- **Session-Based Organization**: Automatically generates unique, timestamped folders for every burst.
+- **Metadata Logging**: Outputs a `metadata.csv` for every session, mapping frame indices to filenames and exact millisecond timestamps.
+- **Sub-Second Precision**: Supports float-based intervals (e.g., `0.1` for 10 FPS capture).
 
-    OS: Windows 10 or 11.
-    Hardware: DirectX 11 compatible GPU and a fast SSD (NVMe recommended).
-    Development: Visual Studio 2019/2022 with the "Desktop development with C++" workload.
+## 🛠 Prerequisites
 
-📦 Setup & Compilation
+- **OS**: Windows 10 or 11.
+- **Hardware**: DirectX 11 compatible GPU and a fast SSD (NVMe recommended).
+- **RAM**: Optimized for high-capacity setups (e.g., 64GB+).
+- **Development**: Visual Studio 2019/2022 with the "Desktop development with C++" workload.
 
-    Create a new C++ Console App in Visual Studio.
-    Replace the contents of main.cpp with the provided source code.
-    Set the Solution Platform to x64.
-    Build in Release mode for maximum performance.
+## 📦 Setup & Compilation
 
-The project automatically links required libraries (d3d11.lib, dxgi.lib, windowscodecs.lib, shlwapi.lib, shell32.lib) via pragmas.
-📖 Usage
+1. Create a new **C++ Console App** in Visual Studio.
+2. Replace the contents of `main.cpp` with the provided source code.
+3. Set the Solution Platform to **x64**.
+4. Build in **Release** mode for maximum performance.
+
+The project automatically links required libraries via pragmas:
+`d3d11.lib`, `dxgi.lib`, `windowscodecs.lib`, `shlwapi.lib`, `shell32.lib`.
+
+## 📖 Usage
+
 Run the executable via Command Prompt or PowerShell:
-bash
 
+```bash
 .\Capture.exe [Base_Path] [Duration_Sec] [Interval_Sec] [Monitor_Index]
+```
 
-Use code with caution.
-Examples:
+### Examples:
+- **Standard Debug**: `.\Capture.exe C:\DebugData 30 1.0 0`  
+  *(30 seconds, 1 frame/sec, Primary Monitor)*
+- **High-Speed Burst**: `.\Capture.exe D:\AI_Training 10 0.1 0`  
+  *(10 seconds, 10 frames/sec, Primary Monitor)*
 
-    Standard Debug: .\Capture.exe C:\DebugData 30 1.0 0
-    (30 seconds, 1 frame/sec, Primary Monitor)
-    High-Speed Burst: .\Capture.exe D:\AI_Training 10 0.1 0
-    (10 seconds, 10 frames/sec, Primary Monitor)
+### Operation:
+1. Launch the tool. The screen will dim.
+2. **Click and drag** to draw a red box around your target viewport.
+3. Release to start the capture session.
+4. Press **ESC** during selection to default to Full Screen.
 
-Operation:
+## 📂 Output Structure
 
-    Launch the tool. The screen will dim.
-    Click and drag to draw a red box around your target viewport.
-    Release to start the capture session.
-    Press ESC during selection to default to Full Screen.
-
-📂 Output Structure
-text
-
+```text
 Target_Directory/
 └── Session_20240325_143005/
     ├── metadata.csv
     ├── 0001_debug_20240325_143006.png
     ├── 0002_debug_20240325_143007.png
     └── ...
+```
 
-Use code with caution.
-Metadata Format:
-FrameIndex	FileName	TimestampMS
-1	0001_debug_...png	102
-2	0002_debug_...png	1105
-⚖️ License
+### Metadata Format:
+
+
+| FrameIndex | FileName | TimestampMS |
+| :--- | :--- | :--- |
+| 1 | 0001_debug_...png | 102 |
+| 2 | 0002_debug_...png | 1105 |
+
+## ⚖️ License
 This project is provided "as-is" for developer and AI research purposes.
