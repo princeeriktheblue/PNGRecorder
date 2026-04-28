@@ -1,0 +1,13 @@
+# Visual Studio temp files
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+*.user
+*.aps
+*.opendb
+
+# App Output - CRITICAL to keep your repo clean
+Session_*/
+*.png
+metadata.csv
