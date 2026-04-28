@@ -39,9 +39,9 @@ Run the executable via Command Prompt or PowerShell:
 ```
 
 ### Examples:
-- **Standard Debug**: `.\Capture.exe C:\DebugData 30 1.0 0`  
+- **Standard Debug**: `.\PNGRecorder.exe C:\DebugData 30 1.0 0`  
   *(30 seconds, 1 frame/sec, Primary Monitor)*
-- **High-Speed Burst**: `.\Capture.exe D:\AI_Training 10 0.1 0`  
+- **High-Speed Burst**: `.\PNGRecorder.exe D:\AI_Training 10 0.1 0`  
   *(10 seconds, 10 frames/sec, Primary Monitor)*
 
 ### Operation:
