@@ -96,5 +96,4 @@ Every session generates a folder named `Session_YYYYMMDD_HHMMSS/`:
 *   **Compiler:** MSVC (Visual Studio 2022) / C++17
 *   **Libraries:** `d3d11.lib`, `dxgi.lib`, `windowscodecs.lib`, `shlwapi.lib`, `shell32.lib`, `winmm.lib`, `advapi32.lib`
 
-**Project Lead:** AI Data Acquisition Team  
 **Status:** v4.0 STABLE
