@@ -27,7 +27,7 @@ The system utilizes a **Triple-Threaded Pipeline** to maximize throughput:
 ### Installation
 1. Clone the repository:
    ```powershell
-   git clone https://github.com
+   git clone https://github.com/princeeriktheblue/PNGRecorder
    ```
 2. Open the `.sln` file in Visual Studio.
 3. Build in **Release x64** mode.
