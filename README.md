@@ -27,7 +27,7 @@ This engine is built for researchers and developers who need high-fidelity visua
 - **Compiler:** MSVC (Visual Studio 2022) with C++17 or higher.
 
 ### Compilation
-1. Clone the repository and open the `.sln` or `.cpp` file in Visual Studio.
+1. Clone the repository and open `.cpp` file in Visual Studio.
 2. Link the following DirectX libraries in your Project Properties:
    - `d3d11.lib`, `dxgi.lib`
 3. Ensure your `lodepng` or chosen PNG encoder source is included in the project.
