@@ -39,6 +39,10 @@ PNGRecorder supports several execution modes to fit different training workflows
     ```powershell
     .\PNGRecorder.exe
     ```
+*   **Config window (Save to `roi.cfg`):**
+    ```powershell
+    .\PNGRecorder.exe -c
+    ```
 *   **Headless Capture (Load from `roi.cfg`):**
     ```powershell
     .\PNGRecorder.exe -l [OutputDir] [DurationSec] [IntervalSec]
