@@ -1,77 +1,44 @@
-# PNGRecorder v3.6 🚀
+# PNGRecorder v4.0 (AI Data Acquisition Engine)
 
-**High-Performance Lossless Screen Capture for AI Training Datasets**
+High-performance, triple-threaded DirectX 11 capture engine designed for generating lossless training datasets for Computer Vision and AI models.
 
-PNGRecorder is a C++ Windows utility designed for high-fidelity data acquisition. Unlike standard screen recorders that use lossy video compression (H.264/H.265), PNGRecorder captures the desktop as a sequence of raw, 24-bit RGB PNGs. This ensures every pixel is mathematically perfect, making it ideal for training Computer Vision and multimodal AI models.
+## 🚀 Engine Architecture
+PNGRecorder v4.0 utilizes a high-speed pipeline optimized for high-end discrete GPUs and ultra-fast NVMe storage.
 
-## 🌟 Key Features
-*   **60+ FPS Performance:** Optimized for high-end hardware (i9-11900K, NVMe SSDs).
-*   **Zero-Allocation Buffer Pool:** Custom "Shock Absorber" memory pool eliminates heap jitter and 15.6ms Windows scheduling delays.
-*   **Lossless Fidelity:** Saves frames directly as PNGs to avoid compression artifacts.
-*   **Flexible ROI Selection:** Manual mouse selection, configuration loading, or coordinate-based overrides.
-*   **Automated Metadata:** Generates a `metadata.csv` with high-precision QPC timestamps for every frame.
+- **Zero-Allocation Buffer Pool:** 150-frame pre-allocated circular buffer (g_poolMemory) eliminates runtime heap churn and allocation lag.
+- **RTX Persistent Mirror:** Captures via `AcquireNextFrame` into a `D3D11_USAGE_DEFAULT` texture, decoupling from the DXGI SwapChain immediately to prevent frame-drop during release.
+- **Staging Texture Pinning:** Reuses a single `D3D11_USAGE_STAGING` buffer to keep GPU-to-CPU memory "warm," bypassing the overhead of 4K texture creation every frame.
+- **Triple-Threaded Execution:**
+    1. **Capture:** DXGI Desktop Duplication (GPU).
+    2. **Transfer:** Resource Resolve, Flush, & Memcpy (GPU/CPU).
+    3. **Writer:** Multi-threaded PNG encoding & NVMe I/O (CPU/Disk).
 
-## 🏗️ Architecture Overview
-The system utilizes a **Triple-Threaded Pipeline** to maximize throughput:
-1.  **Capture Thread:** Uses DirectX 11 Desktop Duplication API to grab GPU textures and copies them to the pre-allocated CPU buffer pool.
-2.  **Processing Thread:** Handles BGRA to RGB conversion and cropping using optimized pointer-step arithmetic.
-3.  **IO Worker:** Encodes and writes PNGs to disk using the Windows Imaging Component (WIC) API.
+## 🛠 Dynamic Hardware Detection
+Version 4.0 removes all hardcoded metadata. Every session performs deep-system interrogation to populate the `session.json`:
 
-## 🚀 Getting Started
+- **CPU:** Exact model string via Registry (`HARDWARE\DESCRIPTION\System\CentralProcessor\0`).
+- **GPU:** Primary adapter enumeration via DXGI (Selecting the discrete RTX 4080 over IGPU).
+- **RAM:** Total physical capacity via `GlobalMemoryStatusEx`.
+- **Storage:** Physical bus-type identification (NVMe/SSD/HDD) via `IOCTL_STORAGE_QUERY_PROPERTY`.
 
-### Requirements
-*   **OS:** Windows 10/11 (64-bit)
-*   **Hardware:** Optimized for high-speed NVMe storage and 32GB+ RAM.
-*   **Compiler:** Visual Studio 2022 (MSVC)
+## 📊 Telemetry & Metadata
+The engine generates high-precision datasets ready for model ingestion:
 
-### Installation
-1. Clone the repository:
-   ```powershell
-   git clone https://github.com/princeeriktheblue/PNGRecorder
-   ```
-2. Open the `.sln` file in Visual Studio.
-3. Build in **Release x64** mode.
+- **metadata.csv:** 
+  - `QPC Timestamp`: Microsecond-precision timing for temporal AI models.
+  - `Normalized ROI`: Resolution-independent coordinates (0.0 - 1.0).
+  - `Context Tracking`: Active Window Title tracking via `GetForegroundWindow`.
+- **session.json:** Global context including hardware specs and session summary.
 
-## 🛠️ Usage
-PNGRecorder supports several execution modes to fit different training workflows:
-
-*   **Quick Start (Manual Selection):**
-    ```powershell
-    .\PNGRecorder.exe
-    ```
-*   **Config window (Save to `roi.cfg`):**
-    ```powershell
-    .\PNGRecorder.exe -c
-    ```
-*   **Headless Capture (Load from `roi.cfg`):**
-    ```powershell
-    .\PNGRecorder.exe -l [OutputDir] [DurationSec] [IntervalSec]
-    ```
-*   **60 FPS Stress Test:**
-    ```powershell
-    .\PNGRecorder.exe -m . 10 0.016 0
-    ```
-*   **Command Line ROI Override:**
-    ```powershell
-    .\PNGRecorder.exe -r [OutputDir] [Duration] [Interval] [MonitorIndex] [X Y W H]
-    ```
-
-## 📊 Technical Benchmarks
-
-| Metric | v3.5 | v3.6 (Current) |
-| :--- | :--- | :--- |
-| **Max FPS** | ~15-20 FPS | **62.5+ FPS** |
-| **Timing Resolution** | 15.6ms (System Clock) | **<1ms (QPC)** |
-| **Memory Management** | Heap Allocation | **Pre-allocated Pool** |
-
-## 📁 Output Structure
-Every session is saved into a unique timestamped folder:
+## 📂 Output Structure
 ```text
-Session_YYYYMMDD_HHMMSS/
-├── 0001_capture.png
-├── 0002_capture.png
-└── metadata.csv
+/Capture_Session_YYYYMMDD/
+├── session.json       # Hardware specs, resolution, and session summary
+├── metadata.csv       # Frame-by-frame telemetry (Timestamp, DeltaMS, ROI, Window Title)
+└── [0000_capture].png # Lossless BGRA dataset frames
 ```
 
----
-**Note:** This tool is designed for high-fidelity data acquisition and can consume significant disk space quickly. Use with high-capacity NVMe storage.
+## 🛡 Reliability & Watchdogs
+- **Atomic Drop Counter:** Tracks silent frame skips due to buffer pool exhaustion.
+- **Black Frame Watchdog:** Validates GPU memory at Frame 5 to ensure the pipeline is "Resolve" ready.
+- **HAGS Sync:** Uses `ID3D11DeviceContext::Flush()` to ensure pixel data is committed before `Map()` calls.
